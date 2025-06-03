@@ -51,13 +51,13 @@
                                     <a href="{{ route('users.edit', $user->id) }}" class="btn btn-warning btn-sm">
                                         <i class="fas fa-edit"></i>
                                     </a>
-                                    <form action="{{ route('users.destroy', $user->id) }}" method="POST" style="display:inline-block">
-                                        @csrf
-                                        @method('DELETE')
-                                        <button type="submit" class="btn btn-danger btn-sm" onclick="return confirm('Hapus user ini?')">
-                                            <i class="fas fa-trash"></i>
-                                        </button>
-                                    </form>
+                                     <form action="{{ route('users.toggle-status', $user->id) }}" method="POST" style="display:inline;">
+                                    @csrf
+                                    @method('PATCH')
+                                    <button type="submit" class="btn btn-sm {{ $user->is_active ? 'btn-danger' : 'btn-success' }}">
+                                        {{ $user->is_active ? 'Nonaktifkan' : 'Aktifkan' }}
+                                    </button>
+                                </form>
                                 </td>
                             </tr>
                         @endforeach

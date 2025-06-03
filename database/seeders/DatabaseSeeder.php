@@ -17,7 +17,7 @@ class DatabaseSeeder extends Seeder
         User::create([
             'name' => 'Super Admin',
             'email' => 'superadmin@example.com',
-            'password' => Hash::make('passwo
+            'password' => Hash::make('password'),
             'role' => 'superadmin',
         ]);
     
@@ -28,4 +28,4 @@ class DatabaseSeeder extends Seeder
             'role' => 'admin',
         ]);
     }
-}  
+}

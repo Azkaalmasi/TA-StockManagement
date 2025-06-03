@@ -67,4 +67,17 @@ class UserController extends Controller
         $user->delete();
         return redirect()->route('users.index')->with('success', 'User berhasil dihapus.');
     }
+    public function toggleStatus(User $user)
+    {
+        $user->is_active = !$user->is_active;
+        $user->save();
+
+        if (!$user->is_active) {
+            \DB::table('sessions')->where('user_id', $user->id)->delete();
+        }
+
+        $status = $user->is_active ? 'diaktifkan' : 'dinonaktifkan';
+        return redirect()->route('users.index')->with('success', "User berhasil $status.");
+    }
+
 }
