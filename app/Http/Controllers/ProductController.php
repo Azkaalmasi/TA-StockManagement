@@ -44,23 +44,47 @@ class ProductController extends Controller
 
 
     public function show($id)
-    {
-        $product = Product::with('category')->findOrFail($id);
-    
-        // Ambil histori stok masuk untuk produk ini
-        $inDetails = InDetail::with('inStock.user')
-                        ->where('product_id', $id)
-                        ->orderByDesc('created_at')
-                        ->get();
-    
-        // Ambil histori stok keluar untuk produk ini
-        $outDetails = OutDetail::with('outStock.user')
-                        ->where('product_id', $id)
-                        ->orderByDesc('created_at')
-                        ->get();
-    
-        return view('products.product-show', compact('product', 'inDetails', 'outDetails'));
+{
+    $product = Product::with('category')->findOrFail($id);
+
+    // Ambil histori stok masuk & keluar
+    $inDetails = InDetail::with('inStock.user')
+        ->where('product_id', $product->id)
+        ->get();
+
+    $outDetails = OutDetail::with('outStock.user')
+        ->where('product_id', $product->id)
+        ->get();
+
+    // Forecasting: pengeluaran per minggu
+    $weeklyData = OutDetail::where('product_id', $product->id)
+        ->join('out_stocks', 'out_details.out_stock_id', '=', 'out_stocks.id')
+        ->selectRaw('YEARWEEK(out_stocks.date, 1) as week, SUM(out_details.quantity) as total')
+        ->groupBy('week')
+        ->orderBy('week')
+        ->get();
+
+    if ($weeklyData->count() >= 2) {
+        $x = range(1, $weeklyData->count());
+        $y = $weeklyData->pluck('total')->toArray();
+        $n = count($x);
+
+        $sumX = array_sum($x);
+        $sumY = array_sum($y);
+        $sumXY = array_sum(array_map(fn($i) => $x[$i] * $y[$i], array_keys($x)));
+        $sumX2 = array_sum(array_map(fn($i) => pow($x[$i], 2), array_keys($x)));
+
+        $b = ($n * $sumXY - $sumX * $sumY) / ($n * $sumX2 - pow($sumX, 2));
+        $a = ($sumY - $b * $sumX) / $n;
+
+        $nextWeekX = $n + 1;
+        $forecast = round($a + $b * $nextWeekX);
+    } else {
+        $forecast = null;
     }
+    return view('products.product-show', compact('product', 'inDetails', 'outDetails', 'forecast'));
+}
+
     
     public function edit($id)
 {

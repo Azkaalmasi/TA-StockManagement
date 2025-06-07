@@ -94,6 +94,20 @@
             @endif
         </div>
     </div>
+                {{-- Forecasting (Estimasi Minggu Depan) --}}
+            <div class="card mb-5">
+                <div class="card-header font-weight-bold text-primary">
+                    Estimasi Pengeluaran Minggu Depan
+                </div>
+                <div class="card-body">
+                    @if (isset($forecast))
+                        <p>Perkiraan jumlah stok yang dibutuhkan minggu depan: <strong>{{ $forecast }}</strong> unit</p>
+                    @else
+                        <p class="text-muted">Data histori belum cukup untuk melakukan forecasting.</p>
+                    @endif
+                </div>
+            </div>
+
 
 </div>
 @endsection

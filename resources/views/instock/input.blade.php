@@ -69,7 +69,7 @@
 
 @push('scripts')
 <script>
-    // Data produsen dari controller
+
     const manufacturers = @json($manufacturers);
     let rowIndex = 1;
 
