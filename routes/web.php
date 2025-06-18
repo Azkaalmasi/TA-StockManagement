@@ -5,6 +5,8 @@ use App\Http\Controllers\ProductController;
 use App\Http\Controllers\InStockController;
 use App\Http\Controllers\OutStockController;
 use App\Http\Controllers\CategoryController;
+use App\Http\Controllers\DashboardController;
+use App\Http\Controllers\ManufacturerController;
 use App\Http\Controllers\UserController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AuthController;
@@ -19,9 +21,7 @@ Route::middleware('auth')->group(function () {
 });
 
 
-Route::middleware(['auth', 'role:admin,superadmin,manager'])->get('/', function () {
-    return view('dashboard');
-});
+Route::middleware(['auth', 'role:admin,superadmin,manager'])->get('/', [DashboardController::class, 'index'])->name('dashboard');
 
 // Route view-only
 Route::middleware(['auth', 'role:admin,superadmin,manager'])->group(function () {
@@ -60,6 +60,9 @@ Route::middleware(['auth', 'role:admin,superadmin'])->group(function () {
 
     // Kategori
     Route::resource('categories', CategoryController::class)->except(['show']);
+
+    // Distributor
+    Route::resource('manufacturers', ManufacturerController::class)->except(['show']);
 });
 
 // Superadmin only

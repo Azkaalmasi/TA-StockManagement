@@ -23,6 +23,7 @@
                             <th>Nama Produk</th>
                             <th>Tanggal Masuk</th>
                             <th>Quantity Masuk</th>
+                            <th>Distributor</th>
                             <th>Petugas</th>
                             <th>Aksi</th>
                         </tr>
@@ -33,6 +34,7 @@
                             <th>Nama Produk</th>
                             <th>Tanggal Masuk</th>
                             <th>Quantity Masuk</th>
+                            <th>Distributor</th>
                             <th>Petugas</th>
                             <th>Aksi</th>
                         </tr>
@@ -44,9 +46,10 @@
                                 <td>{{ $detail->product->name ?? '-' }}</td>
                                 <td>{{ $detail->inStock->date ? $detail->inStock->date->format('Y-m-d') : '-' }}</td>
                                 <td>{{ $detail->quantity }}</td>
+                                <td>{{ $detail->manufacturer->name ?? '-' }}</td>
                                 <td>{{ $detail->inStock->user->name ?? '-' }}</td>
                                 <td>
-                                    <a href="#" class="btn btn-info btn-sm">
+                                    <a href="{{ route('products.show', $detail->product->id) }}" class="btn btn-info btn-sm">
                                         <i class="fas fa-eye"></i>
                                     </a>
                                     

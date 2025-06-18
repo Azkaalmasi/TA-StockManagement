@@ -12,7 +12,11 @@ class Manufacturer extends Model
     public $incrementing = false;
     protected $keyType = 'string';
 
-    protected $fillable = ['name'];
+    protected $fillable = [
+        'name',
+        'address',
+        'phone'
+    ];
     public function inDetails()
     {
         return $this->hasMany(InDetail::class);

@@ -15,8 +15,8 @@
                 <div class="row no-gutters align-items-center">
                     <div class="col mr-2">
                         <div class="text-xs font-weight-bold text-primary text-uppercase mb-1">Produk Teratas</div>
-                        <div class="h5 mb-0 font-weight-bold text-gray-800">KLK 36</div>
-                        <div class="text-xs mt-1 text-muted text-uppercase mb-1">Terjual 60 pcs bulan ini</div>
+                        <div class="h5 mb-0 font-weight-bold text-gray-800"> {{ $topOut?->product->name ?? '-' }}</div>
+                        <div class="text-xs mt-1 text-muted text-uppercase mb-1">Terjual {{ $topOut?->total ?? 0 }} pcs minggu ini</div>
                     </div>
                 </div>
             </div>
@@ -28,8 +28,8 @@
                 <div class="row no-gutters align-items-center">
                     <div class="col mr-2">
                         <div class="text-xs font-weight-bold text-success text-uppercase mb-1">Pembelian Terbanyak</div>
-                        <div class="h5 mb-0 font-weight-bold text-gray-800">AD 1</div>
-                        <div class="text-xs mt-1 text-muted text-uppercase mb-1">Barang Masuk 40 pcs bulan ini</div>
+                        <div class="h5 mb-0 font-weight-bold text-gray-800"> {{ $topIn?->product->name ?? '-' }}</div>
+                        <div class="text-xs mt-1 text-muted text-uppercase mb-1"> Barang Masuk {{ $topIn?->total ?? 0 }} pcs minggu ini</div>
                     </div>
                 </div>
             </div>
@@ -41,8 +41,8 @@
                 <div class="row no-gutters align-items-center">
                     <div class="col mr-2">
                         <div class="text-xs font-weight-bold text-danger text-uppercase mb-1">Stok Terendah</div>
-                        <div class="h5 mb-0 font-weight-bold text-gray-800">KLK 36</div>
-                        <div class="text-xs mt-1 text-muted text-uppercase mb-1">Tersisa 3 pcs</div>
+                        <div class="h5 mb-0 font-weight-bold text-gray-800"> {{ $lowestStock->name ?? '-' }}</div>
+                        <div class="text-xs mt-1 text-muted text-uppercase mb-1"> {{ $lowestStock->stock ?? 0 }}</div>
                     </div>
                 </div>
             </div>
@@ -76,38 +76,16 @@
                                 <th>Stok</th>
                             </tr>
                         </tfoot>
-                        <tbody>
+                       <tbody>
+                        @foreach ($lowStocks as $index => $product)
                             <tr>
-                                <td>1</td>
-                                <td>KLK 36</td>
-                                <td>20</td>
-                                <td>3</td>
+                                <td>{{ $index + 1 }}</td>
+                                <td>{{ $product->name }}</td>
+                                <td>{{ $product->min_stock }}</td>
+                                <td>{{ $product->stock }}</td>
                             </tr>
-                            <tr>
-                                <td>2</td>
-                                <td>KLK 36</td>
-                                <td>20</td>
-                                <td>3</td>
-                            </tr>
-                            <tr>
-                                <td>3</td>
-                                <td>KLK 36</td>
-                                <td>20</td>
-                                <td>3</td>
-                            </tr>
-                            <tr>
-                                <td>4</td>
-                                <td>KLK 36</td>
-                                <td>20</td>
-                                <td>3</td>
-                            </tr>
-                            <tr>
-                                <td>5</td>
-                                <td>KLK 36</td>
-                                <td>20</td>
-                                <td>3</td>
-                            </tr>
-                        </tbody>
+                        @endforeach
+                    </tbody>
                     </table>
                 </div>
             </div>

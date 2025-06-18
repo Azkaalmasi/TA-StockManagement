@@ -46,7 +46,7 @@
                                 <td>{{ $detail->quantity }}</td>
                                 <td>{{ $detail->outStock->user->name ?? '-' }}</td>
                                 <td>
-                                    <a href="#" class="btn btn-info btn-sm">
+                                    <a href="{{ route('products.show', $detail->product->id) }}" class="btn btn-info btn-sm">
                                         <i class="fas fa-eye"></i>
                                     </a>
                              
