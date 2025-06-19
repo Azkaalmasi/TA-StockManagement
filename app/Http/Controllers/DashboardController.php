@@ -66,9 +66,14 @@ class DashboardController extends Controller
         $q->where('date', '>=', $startDate);
     })->sum('quantity');
 
+    //Produk Expired
+     $expiredStocks = InDetail::with('product')
+        ->where('remaining_stock', '>', 0)
+        ->where('expiry_date', '<', Carbon::today())
+        ->get();
 
-    return view('dashboard', compact('topOut', 'topIn', 'lowestStock', 'lowStocks'), [
-        
+    return view('dashboard', compact('topOut', 'topIn', 'lowestStock', 'lowStocks', 'expiredStocks'), [
+
                 'areaLabels' => $chartLabels,   // ex: ['Week 1', 'Week 2']
                 'areaValues' => $chartValues,    // ex: [10, 20]
                 'pieLabels'  => ['Pembelian', 'Penjualan'],

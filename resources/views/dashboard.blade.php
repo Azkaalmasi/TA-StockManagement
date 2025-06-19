@@ -8,7 +8,7 @@
 </div>
 
 <div class="row">
-    <!-- Example Content -->
+    <!-- Content -->
     <div class="col-xl-4 col-md-6 mb-4">
         <div class="card border-left-primary shadow h-100 py-2">
             <div class="card-body">
@@ -50,7 +50,7 @@
     </div>
 </div>
 
-{{-- Table Section --}}
+{{-- Tabel Stok Minimum --}}
 <div>
         <div class="container-fluid">
         <div class="card shadow mb-4">
@@ -92,6 +92,52 @@
         </div>
     </div>
 </div>
+
+{{-- Tabel Expired --}}
+
+{{-- Tabel Stok Minimum --}}
+<div>
+        <div class="container-fluid">
+        <div class="card shadow mb-4">
+            <div class="card-header py-3">
+                <h6 class="m-0 font-weight-bold text-primary">STOK PRODUK SUDAH KEDALUWARSA</h6>
+            </div>
+            <div class="card-body">
+                <div class="table-responsive">
+                    <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
+                        <thead>
+                            <tr>
+                            <th>No</th>
+                            <th>Produk</th>
+                            <th>Kedaluwarsa</th>
+                            <th>Sisa Stok</th>
+                            </tr>
+                        </thead>
+                        <tfoot>
+                            <tr>
+                            <th>No</th>
+                            <th>Produk</th>
+                            <th>Kedaluwarsa</th>
+                            <th>Sisa Stok</th>
+                            </tr>
+                        </tfoot>
+                       <tbody>
+                        @foreach ($expiredStocks as $index => $item)
+                        <tr>
+                            <td>{{ $index + 1 }}</td>
+                            <td>{{ $item->product->name }}</td>
+                            <td>{{ $item->expiry_date }}</td>
+                            <td>{{ $item->remaining_stock }}</td>
+                        </tr>
+                        @endforeach
+                    </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
 
 {{-- Chart Section --}}
 
