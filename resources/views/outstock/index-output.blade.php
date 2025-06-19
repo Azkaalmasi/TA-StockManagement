@@ -21,8 +21,8 @@
                         <tr>
                             <th>No</th>
                             <th>Nama Produk</th>
-                            <th>Tanggal Masuk</th>
-                            <th>Quantity Masuk</th>
+                            <th>Tanggal Keluar</th>
+                            <th>Quantity Keluar</th>
                             <th>Petugas</th>
                             <th>Aksi</th>
                         </tr>
@@ -31,8 +31,8 @@
                         <tr>
                             <th>No</th>
                             <th>Nama Produk</th>
-                            <th>Tanggal Masuk</th>
-                            <th>Quantity Masuk</th>
+                            <th>Tanggal Keluar</th>
+                            <th>Quantity Keluar</th>
                             <th>Petugas</th>
                             <th>Aksi</th>
                         </tr>

@@ -41,6 +41,38 @@ class DashboardController extends Controller
     // Produk dengan stok di bawah minimum
     $lowStocks = Product::whereColumn('stock', '<', 'min_stock')->get();
 
-    return view('dashboard', compact('topOut', 'topIn', 'lowestStock', 'lowStocks'));
+    $startDate = now()->subDays(30);
+
+    // Grafik
+    $weeklySales = \App\Models\OutDetail::whereHas('outStock', function ($q) use ($startDate) {
+        $q->where('date', '>=', $startDate);
+    })
+    ->selectRaw("WEEK(out_stocks.date, 1) as week_number, SUM(quantity) as total")
+    ->join('out_stocks', 'out_stocks.id', '=', 'out_details.out_stock_id')
+    ->groupBy('week_number')
+    ->orderBy('week_number')
+    ->pluck('total', 'week_number');
+
+    $chartLabels = $weeklySales->keys()->map(fn($week) => "Minggu ke-$week");
+    $chartValues = $weeklySales->values();
+
+    //Pie Chart
+
+    $totalIn = \App\Models\InDetail::whereHas('inStock', function ($q) use ($startDate) {
+    $q->where('date', '>=', $startDate);
+    })->sum('quantity');
+
+    $totalOut = \App\Models\OutDetail::whereHas('outStock', function ($q) use ($startDate) {
+        $q->where('date', '>=', $startDate);
+    })->sum('quantity');
+
+
+    return view('dashboard', compact('topOut', 'topIn', 'lowestStock', 'lowStocks'), [
+        
+                'areaLabels' => $chartLabels,   // ex: ['Week 1', 'Week 2']
+                'areaValues' => $chartValues,    // ex: [10, 20]
+                'pieLabels'  => ['Pembelian', 'Penjualan'],
+                'pieValues'  => [$totalIn, $totalOut],
+    ]);
 }
 }
