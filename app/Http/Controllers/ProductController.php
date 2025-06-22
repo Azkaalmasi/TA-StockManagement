@@ -8,6 +8,7 @@ use Illuminate\Support\Str;
 use App\Models\Category;
 use App\Models\InDetail;
 use App\Models\OutDetail;
+use Barryvdh\DomPDF\Facade\Pdf;
 
 class ProductController extends Controller
 {
@@ -130,5 +131,20 @@ class ProductController extends Controller
         $product->delete();
         return redirect()->route('products.index')->with('success', 'Produk berhasil dihapus');
     }
+
+    public function exportPdf($id)
+{
+    $product = Product::with('category')->findOrFail($id);
+
+    $inDetails = InDetail::with('inStock.user')
+        ->where('product_id', $product->id)->get();
+
+    $outDetails = OutDetail::with('outStock.user')
+        ->where('product_id', $product->id)->get();
+
+    $pdf = Pdf::loadView('products.pdf-detail', compact('product', 'inDetails', 'outDetails'));
+
+    return $pdf->download('detail_produk_'.$product->code.'.pdf');
+}
     
 }

@@ -72,6 +72,15 @@ class DashboardController extends Controller
         ->where('expiry_date', '<', Carbon::today())
         ->get();
 
+    if ($lowStocks->count()) {
+    $lowStockList = $lowStocks->map(function ($product) {
+        return "- {$product->name} (Stok: {$product->stock}, Minimum: {$product->min_stock})";
+    })->implode('<br>');
+
+    session()->flash('low_stock_warning', $lowStockList);
+    }
+
+
     return view('dashboard', compact('topOut', 'topIn', 'lowestStock', 'lowStocks', 'expiredStocks'), [
 
                 'areaLabels' => $chartLabels,   // ex: ['Week 1', 'Week 2']

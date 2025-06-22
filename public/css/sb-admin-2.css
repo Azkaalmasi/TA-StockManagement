@@ -10322,6 +10322,7 @@ a:focus {
 .sidebar {
   width: 6.5rem;
   min-height: 100vh;
+  transition: all 0.3s ease-in-out;
 }
 
 .sidebar .nav-item {
@@ -10436,6 +10437,7 @@ a:focus {
 .sidebar.toggled {
   width: 0 !important;
   overflow: hidden;
+  transition: all 0.3s ease-in-out;
 }
 
 .sidebar.toggled #sidebarToggle::after {
@@ -10458,6 +10460,7 @@ a:focus {
   text-transform: uppercase;
   letter-spacing: 0.05rem;
   z-index: 1;
+  transition: all 0.3s ease-in-out;
 }
 
 .sidebar .sidebar-brand .sidebar-brand-icon i {

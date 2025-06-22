@@ -63,6 +63,9 @@ Route::middleware(['auth', 'role:admin,superadmin'])->group(function () {
 
     // Distributor
     Route::resource('manufacturers', ManufacturerController::class)->except(['show']);
+
+    Route::get('/products/{id}/export-pdf', [App\Http\Controllers\ProductController::class, 'exportPdf'])->name('products.export.pdf');
+
 });
 
 // Superadmin only

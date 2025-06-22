@@ -10,6 +10,12 @@
         <a href="{{ route('products.index') }}" class="btn btn-secondary">← Kembali</a>
     </div>
 
+    <div class="container-fluid">
+        <a href="{{ route('products.export.pdf', $product->id) }}" class="btn btn-success mb-3">
+         <i class="fas fa-file-pdf"></i> Export PDF
+        </a>
+    </div>
+
      {{-- Forecasting (Estimasi Minggu Depan) --}}
         <div class="container-fluid">
             <div class="card shadow mb-4">

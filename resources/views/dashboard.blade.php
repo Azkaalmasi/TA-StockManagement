@@ -293,6 +293,18 @@
         </div>
     </div>
 </div>
-
+@push('scripts')
+@if (session('low_stock_warning'))
+<script>
+    Swal.fire({
+        icon: 'warning',
+        title: 'Produk di Bawah Minimum!',
+        html: `{!! session('low_stock_warning') !!}`,
+        confirmButtonText: 'Tutup',
+        width: 600
+    });
+</script>
+@endif
+@endpush
 
 @endsection
