@@ -14,6 +14,13 @@ class DamagedStockController extends Controller
 {
     public function index(Request $request)
     {
+         $availableYears = DB::table('damaged_stocks')
+        ->selectRaw('YEAR(date) as year')
+        ->distinct()
+        ->orderBy('year', 'desc')
+        ->pluck('year');
+
+        //filter
         $month = $request->get('month', now()->month);
         $year  = $request->get('year', now()->year);
 
@@ -27,7 +34,7 @@ class DamagedStockController extends Controller
 
         $damagedDetails = $query->get();
 
-        return view('damaged.index-damaged', compact('damagedDetails'));
+        return view('damaged.index-damaged', compact('damagedDetails','availableYears', 'month', 'year'));
     }
 
     public function getBatches(Request $request)

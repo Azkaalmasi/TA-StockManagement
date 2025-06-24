@@ -50,6 +50,21 @@ public function show($id)
 
     $month = request('month');
     $year = request('year', now()->year);
+    
+    $inYears = InDetail::where('product_id', $product->id)
+    ->join('in_stocks', 'in_details.in_stock_id', '=', 'in_stocks.id')
+    ->selectRaw('YEAR(in_stocks.date) as year')
+    ->distinct()
+    ->pluck('year');
+
+    $outYears = OutDetail::where('product_id', $product->id)
+    ->join('out_stocks', 'out_details.out_stock_id', '=', 'out_stocks.id')
+    ->selectRaw('YEAR(out_stocks.date) as year')
+    ->distinct()
+    ->pluck('year');
+
+    
+    $allYears = $inYears->merge($outYears)->unique()->sort()->values();
 
     $inDetails = InDetail::with('inStock.user')
         ->where('product_id', $product->id)
@@ -90,30 +105,36 @@ public function show($id)
     $chartData   = $weeklyChart->pluck('total');
 
     if ($weeklyData->count() >= 2) {
-        $x = range(1, $weeklyData->count());
-        $y = $weeklyData->pluck('total')->toArray();
-        $n = count($x);
+    $x = range(1, $weeklyData->count());
+    $y = $weeklyData->pluck('total')->toArray();
+    $n = count($x);
 
-        $sumX = array_sum($x);
-        $sumY = array_sum($y);
-        $sumXY = array_sum(array_map(fn($i) => $x[$i] * $y[$i], array_keys($x)));
-        $sumX2 = array_sum(array_map(fn($i) => pow($x[$i], 2), array_keys($x)));
+    $sumX = array_sum($x);
+    $sumY = array_sum($y);
+    $sumXY = array_sum(array_map(fn($i) => $x[$i] * $y[$i], array_keys($x)));
+    $sumX2 = array_sum(array_map(fn($i) => pow($x[$i], 2), array_keys($x)));
 
-        $b = ($n * $sumXY - $sumX * $sumY) / ($n * $sumX2 - pow($sumX, 2));
-        $a = ($sumY - $b * $sumX) / $n;
+    $b = ($n * $sumXY - $sumX * $sumY) / ($n * $sumX2 - pow($sumX, 2));
+    $a = ($sumY - $b * $sumX) / $n;
 
-        $forecast = round($a + $b * ($n + 1));
-    } else {
-        $forecast = null;
-    }
+    $forecast = round($a + $b * ($n + 1));
+
+    // Tambahkan forecast ke grafik
+    $chartLabels[] = 'Forecast';
+    $chartData[] = $forecast;
+        } else {
+            $forecast = null;
+        }
+
 
     return view('products.product-show', compact(
-        'product',
-        'inDetails',
-        'outDetails',
-        'forecast',
-        'chartLabels',
-        'chartData'
+    'product',
+    'inDetails',
+    'outDetails',
+    'forecast',
+    'chartLabels',
+    'chartData',
+    'allYears'
     ));
 }
 

@@ -18,20 +18,22 @@ class InStockController extends Controller
 
 public function index(Request $request)
 {
-    $month = $request->get('month',now()->month);
-    $year = $request->get('year', now()->year);
+    $availableYears = DB::table('in_stocks')
+        ->selectRaw('YEAR(date) as year')
+        ->distinct()
+        ->orderBy('year', 'desc')
+        ->pluck('year');
 
-    $query = InDetail::with(['product', 'inStock.user', 'manufacturer'])
-        ->whereHas('inStock', function ($q) use ($month, $year) {
-            if ($month) {
-                $q->whereMonth('date', $month);
-            }
-            $q->whereYear('date', $year);
-        });
+    // Filter
+    $month = $request->input('month');
+    $year = $request->input('year', now()->year);
 
-    $inDetails = $query->get();
+    $inDetails = InDetail::with(['product', 'inStock.user', 'manufacturer'])
+        ->when($month, fn($q) => $q->whereHas('inStock', fn($q2) => $q2->whereMonth('date', $month)))
+        ->when($year, fn($q) => $q->whereHas('inStock', fn($q2) => $q2->whereYear('date', $year)))
+        ->get();
 
-    return view('instock.index-input', compact('inDetails'));
+    return view('instock.index-input', compact('inDetails', 'availableYears', 'month', 'year'));
 }
 
 public function previewExcel(Request $request)

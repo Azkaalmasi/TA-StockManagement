@@ -31,8 +31,13 @@
                             @endfor
                         </select>
 
-                    <input type="number" name="year" class="form-control mr-2" placeholder="Tahun"
-                        value="{{ request('year', now()->year) }}" min="2000" max="{{ now()->year }}">
+                  <select name="year" class="form-control mr-2">
+                        @foreach ($availableYears as $y)
+                            <option value="{{ $y }}" {{ (int) request('year', now()->year) === (int) $y ? 'selected' : '' }}>
+                                {{ $y }}
+                            </option>
+                        @endforeach
+                    </select>
 
                     <button type="submit" class="btn btn-primary">Terapkan</button>
                 </form>

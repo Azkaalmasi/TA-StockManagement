@@ -15,6 +15,14 @@ class OutStockController extends Controller
 {
     public function index(Request $request)
     {
+
+        $availableYears = DB::table('out_stocks')
+                ->selectRaw('YEAR(date) as year')
+                ->distinct()
+                ->orderBy('year', 'desc')
+                ->pluck('year');
+
+        //filter        
         $month = $request->get('month',now()->month);
         $year  = $request->get('year', now()->year);
 
@@ -28,8 +36,10 @@ class OutStockController extends Controller
 
         $outDetails = $query->get();
 
-        return view('outstock.index-output', compact('outDetails'));
+        return view('outstock.index-output', compact('outDetails','availableYears', 'month', 'year'));
     }
+
+
 
 
 public function getBatches(Request $request)

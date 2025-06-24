@@ -81,8 +81,14 @@
                     @endfor
                 </select>
 
-                <input type="number" name="year" class="form-control mr-2" placeholder="Tahun"
-                    value="{{ request('year', now()->year) }}" min="2000" max="{{ now()->year }}">
+               <select name="year" class="form-control mr-2">
+                    @foreach ($allYears as $y)
+                        <option value="{{ $y }}" {{ request('year', now()->year) == $y ? 'selected' : '' }}>
+                            {{ $y }}
+                        </option>
+                    @endforeach
+                </select>
+
 
                 <button type="submit" class="btn btn-primary">Terapkan</button>
             </form>
@@ -197,32 +203,50 @@
     Chart.defaults.global.defaultFontFamily = 'Nunito';
     Chart.defaults.global.defaultFontColor = '#858796';
 
+    const labels = {!! json_encode($chartLabels) !!};
+    const fullData = {!! json_encode($chartData) !!};
+    const lastIndex = fullData.length - 1;
+
+   const actualData = fullData.slice(0, fullData.length - 1);
+    const forecastPoint = fullData[fullData.length - 1];
+    const forecastData = [...actualData, forecastPoint]; 
+
+
+
     const ctx = document.getElementById("weeklySalesChart");
     const weeklyChart = new Chart(ctx, {
         type: 'line',
         data: {
-            labels: {!! json_encode($chartLabels) !!},
-            datasets: [{
-                label: "Jumlah Terjual",
-                lineTension: 0.3,
-                backgroundColor: "rgba(78, 115, 223, 0.05)",
-                borderColor: "rgba(78, 115, 223, 1)",
-                pointRadius: 3,
-                pointBackgroundColor: "rgba(78, 115, 223, 1)",
-                pointBorderColor: "rgba(78, 115, 223, 1)",
-                pointHoverRadius: 3,
-                pointHoverBackgroundColor: "rgba(78, 115, 223, 1)",
-                pointHoverBorderColor: "rgba(78, 115, 223, 1)",
-                pointHitRadius: 10,
-                pointBorderWidth: 2,
-                data: {!! json_encode($chartData) !!},
-            }],
+            labels: labels,
+                datasets: [
+                {
+                    label: "Jumlah Terjual",
+                    data: actualData,
+                    borderColor: "rgba(78, 115, 223, 1)",
+                    backgroundColor: "rgba(78, 115, 223, 0.05)",
+                    pointBackgroundColor: "rgba(78, 115, 223, 1)",
+                    borderWidth: 2,
+                    lineTension: 0.3,
+                },
+                {
+                    label: "Forecast",
+                    data: forecastData.map((val, idx) =>
+                    idx < forecastData.length - 2 ? null : val
+                    ),
+                    borderColor: "rgba(255, 99, 132, 1)",
+                    backgroundColor: "rgba(255, 99, 132, 0.2)",
+                    pointBackgroundColor: "rgba(255, 99, 132, 1)",
+                    pointRadius: 5,
+                    borderDash: [5, 5],
+                    fill: false,
+                },
+                ],
+
+
         },
         options: {
             maintainAspectRatio: false,
-            layout: {
-                padding: { left: 10, right: 25, top: 25, bottom: 0 }
-            },
+            layout: { padding: { left: 10, right: 25, top: 25, bottom: 0 }},
             scales: {
                 xAxes: [{
                     gridLines: { display: false, drawBorder: false },
@@ -245,7 +269,7 @@
                     }
                 }]
             },
-            legend: { display: false },
+            legend: { display: true },
             tooltips: {
                 backgroundColor: "rgb(255,255,255)",
                 bodyFontColor: "#858796",
@@ -253,11 +277,11 @@
                 borderWidth: 1,
                 xPadding: 15,
                 yPadding: 15,
-                displayColors: false,
+                displayColors: true,
                 caretPadding: 10,
                 callbacks: {
                     label: function(tooltipItem, chart) {
-                        return 'Terjual: ' + tooltipItem.yLabel + ' pcs';
+                        return tooltipItem.dataset.label + ': ' + tooltipItem.yLabel + ' pcs';
                     }
                 }
             }
@@ -265,5 +289,6 @@
     });
 </script>
 @endpush
+
 
 @endsection

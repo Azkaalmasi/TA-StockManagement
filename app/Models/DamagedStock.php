@@ -28,6 +28,7 @@ class DamagedStock extends Model
     {
         return $this->hasMany(DamagedDetail::class);
     }
+    
 
         protected static function boot()
 {
