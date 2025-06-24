@@ -68,7 +68,24 @@
         <div class="container-fluid">
         <div class="card shadow mb-4">
             <div class="card-header py-3">
-                <h6 class="m-0 font-weight-bold text-primary">RIWAYAT STOK MASUK</h6>
+                <h6 class="mb-3 font-weight-bold text-primary">RIWAYAT STOK MASUK</h6>
+                <form method="GET" class="form-inline mb-1">
+                <label class="mr-2">Filter:</label>
+
+                <select name="month" class="form-control mr-2">
+                    <option value="">Semua Bulan</option>
+                    @for ($m = 1; $m <= 12; $m++)
+                        <option value="{{ $m }}" {{ request('month') == $m ? 'selected' : '' }}>
+                            {{ DateTime::createFromFormat('!m', $m)->format('F') }}
+                        </option>
+                    @endfor
+                </select>
+
+                <input type="number" name="year" class="form-control mr-2" placeholder="Tahun"
+                    value="{{ request('year', now()->year) }}" min="2000" max="{{ now()->year }}">
+
+                <button type="submit" class="btn btn-primary">Terapkan</button>
+            </form>
             </div>
             <div class="card-body">
                  @if ($inDetails->count())
@@ -116,7 +133,24 @@
         <div class="container-fluid">
         <div class="card shadow mb-4">
             <div class="card-header py-3">
-                <h6 class="m-0 font-weight-bold text-primary">RIWAYAT STOK KELUAR</h6>
+                <h6 class="mb-3 font-weight-bold text-primary">RIWAYAT STOK KELUAR</h6>
+            <form method="GET" class="form-inline mb-1">
+                <label class="mr-2">Filter:</label>
+
+                <select name="month" class="form-control mr-2">
+                    <option value="">Semua Bulan</option>
+                    @for ($m = 1; $m <= 12; $m++)
+                        <option value="{{ $m }}" {{ request('month') == $m ? 'selected' : '' }}>
+                            {{ DateTime::createFromFormat('!m', $m)->format('F') }}
+                        </option>
+                    @endfor
+                </select>
+
+                <input type="number" name="year" class="form-control mr-2" placeholder="Tahun"
+                    value="{{ request('year', now()->year) }}" min="2000" max="{{ now()->year }}">
+
+                <button type="submit" class="btn btn-primary">Terapkan</button>
+            </form>
             </div>
             <div class="card-body">
                   @if ($outDetails->count())

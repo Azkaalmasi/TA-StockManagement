@@ -10,6 +10,7 @@ use App\Http\Controllers\ManufacturerController;
 use App\Http\Controllers\UserController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AuthController;
+use App\Http\Controllers\DamagedStockController;
 
  
 Route::get('/login', [AuthController::class, 'showLoginForm'])->name('login');
@@ -45,19 +46,26 @@ Route::middleware(['auth', 'role:admin,superadmin'])->group(function () {
     Route::put('/products/{id}', [ProductController::class, 'update'])->name('products.update');
     Route::delete('/products/{id}', [ProductController::class, 'destroy'])->name('products.destroy');
 
-    // Barang Masuk CRUD
+    // Barang Masuk 
     Route::get('/in-stocks', [InStockController::class, 'create'])->name('in-stocks.create');
     Route::post('/in-stocks', [InStockController::class, 'store'])->name('in-stocks.store');
     Route::post('/in-stocks/batch', [InStockController::class, 'batchStore'])->name('in-stocks.batchStore');
     Route::post('/in-stocks/preview-excel', [InStockController::class, 'previewExcel'])->name('in-stocks.previewExcel');
 
-    // Barang Keluar CRUD
+    // Barang Keluar 
     Route::get('/out-stocks', [OutStockController::class, 'create'])->name('out-stocks.create');
     Route::post('/out-stocks', [OutStockController::class, 'store'])->name('out-stocks.store');
     Route::post('/out-stocks/batch', [OutStockController::class, 'batchStore'])->name('out-stocks.batchStore');
     Route::post('/out-stocks/preview-excel', [OutStockController::class, 'previewExcel'])->name('out-stocks.previewExcel');
     Route::get('/out-stocks/getbatches', [OutStockController::class, 'getBatches'])->name('out-stocks.getBatches');
 
+    // Damaged Stocks
+    Route::get('/damaged-stocks', [DamagedStockController::class, 'create'])->name('damaged-stocks.create');
+    Route::post('/damaged-stocks', [DamagedStockController::class, 'store'])->name('damaged-stocks.store'); // optional if needed
+    Route::post('/damaged-stocks/batch', [DamagedStockController::class, 'batchStore'])->name('damaged-stocks.batchStore');
+    Route::get('/damaged-stocks/getbatches', [DamagedStockController::class, 'getBatches'])->name('damaged-stocks.getBatches');
+    Route::get('/damaged-stocks/index', [DamagedStockController::class, 'index'])->name('damaged-stocks.index');
+    
     // Kategori
     Route::resource('categories', CategoryController::class)->except(['show']);
 

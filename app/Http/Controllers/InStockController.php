@@ -16,9 +16,20 @@ class InStockController extends Controller
 
 
 
-public function index()
+public function index(Request $request)
 {
-    $inDetails = InDetail::with(['product', 'inStock.user'])->get();
+    $month = $request->get('month',now()->month);
+    $year = $request->get('year', now()->year);
+
+    $query = InDetail::with(['product', 'inStock.user', 'manufacturer'])
+        ->whereHas('inStock', function ($q) use ($month, $year) {
+            if ($month) {
+                $q->whereMonth('date', $month);
+            }
+            $q->whereYear('date', $year);
+        });
+
+    $inDetails = $query->get();
 
     return view('instock.index-input', compact('inDetails'));
 }

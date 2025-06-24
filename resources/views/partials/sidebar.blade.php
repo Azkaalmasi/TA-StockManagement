@@ -2,7 +2,7 @@
         <ul class="navbar-nav bg-gradient-primary sidebar sidebar-dark accordion" id="accordionSidebar">
 
             <!-- Sidebar - Brand -->
-            <a class="sidebar-brand d-flex align-items-center justify-content-center" href="{{ url('/dashboard') }}">
+            <a class="sidebar-brand d-flex align-items-center justify-content-center" href="{{ url('/') }}">
                 <div class="sidebar-brand-icon ">
                     <img src="{{ asset('img/Logo.png') }}" alt="Logo" style="width: 40px; height: auto;">
                 </div>
@@ -46,6 +46,12 @@
                 <a class="nav-link" href="{{ url('/out-stocks-index') }}">
                     <i class="fas fa-fw fa-folder-minus"></i>
                     <span>Stok Keluar</span></a>
+            </li>
+
+            <li class="nav-item {{ request()->is('damaged-stocks.index') ? 'active' : '' }}">
+                <a class="nav-link" href="{{ url('/damaged-stocks/index') }}">
+                    <i class="far fa-fw fa-folder-open"></i>
+                    <span>Stok Rusak</span></a>
             </li>
 
             <!-- Divider -->

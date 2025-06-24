@@ -13,12 +13,25 @@ use App\Models\InDetail;
 
 class OutStockController extends Controller
 {
-    public function index()
-{
-    $outDetails = OutDetail::with(['product', 'outStock.user'])->get();
+    public function index(Request $request)
+    {
+        $month = $request->get('month',now()->month);
+        $year  = $request->get('year', now()->year);
 
-    return view('outstock.index-output', compact('outDetails'));
-}
+        $query = OutDetail::with(['product', 'outStock.user'])
+            ->whereHas('outStock', function ($q) use ($month, $year) {
+                if ($month) {
+                    $q->whereMonth('date', $month);
+                }
+                $q->whereYear('date', $year);
+            });
+
+        $outDetails = $query->get();
+
+        return view('outstock.index-output', compact('outDetails'));
+    }
+
+
 public function getBatches(Request $request)
 {
     $request->validate([

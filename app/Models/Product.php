@@ -28,6 +28,12 @@ class Product extends Model
         return $this->hasMany(OutDetail::class);
     }
 
+    public function damagedDetails()
+{
+    return $this->hasMany(DamagedDetail::class);
+}
+
+
     protected static function boot()
     {
         parent::boot();
@@ -40,17 +46,24 @@ class Product extends Model
 
         // Event setelah product dihapus  
         static::deleted(function ($product) {
-            // Cari InStock yang tidak punya detail lagi
+            // Hapus InStock yang orphan
             $orphanedInStocks = \App\Models\InStock::whereDoesntHave('details')->get();
-            foreach($orphanedInStocks as $inStock) {
+            foreach ($orphanedInStocks as $inStock) {
                 $inStock->delete();
             }
-            
-            // Cari OutStock yang tidak punya detail lagi
+
+            // Hapus OutStock yang orphan
             $orphanedOutStocks = \App\Models\OutStock::whereDoesntHave('details')->get();
-            foreach($orphanedOutStocks as $outStock) {
+            foreach ($orphanedOutStocks as $outStock) {
                 $outStock->delete();
             }
+
+            // Tambahan: hapus DamagedStock yang orphan
+            $orphanedDamagedStocks = \App\Models\DamagedStock::whereDoesntHave('damagedDetails')->get();
+            foreach ($orphanedDamagedStocks as $damagedStock) {
+                $damagedStock->delete();
+            }
         });
+
     }
 }

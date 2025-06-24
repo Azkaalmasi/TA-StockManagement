@@ -44,35 +44,49 @@ class ProductController extends Controller
     }
 
 
-    public function show($id)
+public function show($id)
 {
     $product = Product::with('category')->findOrFail($id);
 
-    // Ambil histori stok masuk & keluar
+    $month = request('month');
+    $year = request('year', now()->year);
+
     $inDetails = InDetail::with('inStock.user')
         ->where('product_id', $product->id)
+        ->when($year, function ($q) use ($year) {
+            $q->whereHas('inStock', fn($sub) => $sub->whereYear('date', $year));
+        })
+        ->when($month, function ($q) use ($month) {
+            $q->whereHas('inStock', fn($sub) => $sub->whereMonth('date', $month));
+        })
         ->get();
 
     $outDetails = OutDetail::with('outStock.user')
         ->where('product_id', $product->id)
+        ->when($year, function ($q) use ($year) {
+            $q->whereHas('outStock', fn($sub) => $sub->whereYear('date', $year));
+        })
+        ->when($month, function ($q) use ($month) {
+            $q->whereHas('outStock', fn($sub) => $sub->whereMonth('date', $month));
+        })
         ->get();
 
-    // Forecasting: pengeluaran per minggu
+
     $weeklyData = OutDetail::where('product_id', $product->id)
         ->join('out_stocks', 'out_details.out_stock_id', '=', 'out_stocks.id')
         ->selectRaw('YEARWEEK(out_stocks.date, 1) as week, SUM(out_details.quantity) as total')
         ->groupBy('week')
         ->orderBy('week')
         ->get();
-        
-    $weeklyChart = OutDetail::where('product_id', $product->id)
-    ->join('out_stocks', 'out_details.out_stock_id', '=', 'out_stocks.id')
-    ->selectRaw('YEARWEEK(out_stocks.date, 1) as week, DATE_FORMAT(MIN(out_stocks.date), "%d-%b") as label, SUM(quantity) as total')
-    ->groupBy('week')
-    ->orderBy('week')
-    ->get();
 
-    $chartLabels = $weeklyChart->pluck('label');  // ['03-Jun', '10-Jun', ...]
+    $weeklyChart = OutDetail::where('product_id', $product->id)
+        ->join('out_stocks', 'out_details.out_stock_id', '=', 'out_stocks.id')
+        ->selectRaw('YEARWEEK(out_stocks.date, 1) as week, DATE_FORMAT(MIN(out_stocks.date), "%d-%b") as label, SUM(quantity) as total')
+        ->groupBy('week')
+        ->orderBy('week')
+        ->get();
+
+    $chartLabels = $weeklyChart->pluck('label');
     $chartData   = $weeklyChart->pluck('total');
 
     if ($weeklyData->count() >= 2) {
@@ -88,13 +102,21 @@ class ProductController extends Controller
         $b = ($n * $sumXY - $sumX * $sumY) / ($n * $sumX2 - pow($sumX, 2));
         $a = ($sumY - $b * $sumX) / $n;
 
-        $nextWeekX = $n + 1;
-        $forecast = round($a + $b * $nextWeekX);
+        $forecast = round($a + $b * ($n + 1));
     } else {
         $forecast = null;
     }
-    return view('products.product-show', compact('product', 'inDetails', 'outDetails', 'forecast','chartLabels','chartData'));
+
+    return view('products.product-show', compact(
+        'product',
+        'inDetails',
+        'outDetails',
+        'forecast',
+        'chartLabels',
+        'chartData'
+    ));
 }
+
 
     
     public function edit($id)

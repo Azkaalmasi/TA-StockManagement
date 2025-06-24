@@ -16,6 +16,25 @@
         </div>
         <div class="card-body">
             <div class="table-responsive">
+                <form method="GET" class="form-inline mb-3">
+                    <label class="mr-2">Filter:</label>
+                        @php
+                            $selectedMonth = request()->has('month') ? request('month') : now()->month;
+                        @endphp
+
+                        <select name="month" class="form-control mr-2">
+                            <option value="" {{ request('month') === '' ? 'selected' : '' }}>Semua Bulan</option>
+                            @for ($m = 1; $m <= 12; $m++)
+                                <option value="{{ $m }}" {{ (int)$selectedMonth === $m ? 'selected' : '' }}>
+                                    {{ DateTime::createFromFormat('!m', $m)->format('F') }}
+                                </option>
+                            @endfor
+                        </select>
+                    <input type="number" name="year" class="form-control mr-2" placeholder="Tahun"
+                        value="{{ request('year', now()->year) }}" min="2000" max="{{ now()->year }}">
+
+                    <button type="submit" class="btn btn-primary">Terapkan</button>
+                </form>
                 <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
                     <thead>
                         <tr>
