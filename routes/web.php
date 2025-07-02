@@ -35,6 +35,12 @@ Route::middleware(['auth', 'role:admin,superadmin,manager'])->group(function () 
 
     // Barang Keluar view
     Route::get('/out-stocks-index', [OutStockController::class, 'index'])->name('out-stocks.index');
+
+    //Barang Rusak View
+    Route::get('/damaged-stocks/index', [DamagedStockController::class, 'index'])->name('damaged-stocks.index');
+
+    //Export PDF
+      Route::get('/products/{id}/export-pdf', [App\Http\Controllers\ProductController::class, 'exportPdf'])->name('products.export.pdf');
 });
 
 // Route   CRUD 
@@ -64,7 +70,6 @@ Route::middleware(['auth', 'role:admin,superadmin'])->group(function () {
     Route::post('/damaged-stocks', [DamagedStockController::class, 'store'])->name('damaged-stocks.store'); // optional if needed
     Route::post('/damaged-stocks/batch', [DamagedStockController::class, 'batchStore'])->name('damaged-stocks.batchStore');
     Route::get('/damaged-stocks/getbatches', [DamagedStockController::class, 'getBatches'])->name('damaged-stocks.getBatches');
-    Route::get('/damaged-stocks/index', [DamagedStockController::class, 'index'])->name('damaged-stocks.index');
     
     // Kategori
     Route::resource('categories', CategoryController::class)->except(['show']);
@@ -72,7 +77,6 @@ Route::middleware(['auth', 'role:admin,superadmin'])->group(function () {
     // Distributor
     Route::resource('manufacturers', ManufacturerController::class)->except(['show']);
 
-    Route::get('/products/{id}/export-pdf', [App\Http\Controllers\ProductController::class, 'exportPdf'])->name('products.export.pdf');
 
 });
 

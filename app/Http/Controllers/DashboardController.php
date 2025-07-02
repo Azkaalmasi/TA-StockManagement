@@ -44,14 +44,22 @@ class DashboardController extends Controller
     $startDate = now()->subDays(30);
 
     // Grafik
-    $weeklySales = \App\Models\OutDetail::whereHas('outStock', function ($q) use ($startDate) {
-        $q->where('date', '>=', $startDate);
-    })
-    ->selectRaw("WEEK(out_stocks.date, 1) as week_number, SUM(quantity) as total")
-    ->join('out_stocks', 'out_stocks.id', '=', 'out_details.out_stock_id')
-    ->groupBy('week_number')
-    ->orderBy('week_number')
-    ->pluck('total', 'week_number');
+    $startOfMonth = Carbon::now()->startOfMonth();
+    $endOfMonth = Carbon::now()->endOfMonth();
+
+    $weeklySales = \App\Models\OutDetail::whereHas('outStock', function ($q) use ($startOfMonth, $endOfMonth) {
+            $q->whereBetween('date', [$startOfMonth, $endOfMonth]);
+        })
+        ->select('out_stocks.date', 'quantity')
+        ->join('out_stocks', 'out_stocks.id', '=', 'out_details.out_stock_id')
+        ->get()
+        ->groupBy(function ($item) use ($startOfMonth) {
+            return floor($startOfMonth->diffInDays(Carbon::parse($item->date)) / 7) + 1;
+        })
+        ->map(function ($group) {
+            return $group->sum('quantity');
+        })
+        ->sortKeys();
 
     $chartLabels = $weeklySales->keys()->map(fn($week) => "Minggu ke-$week");
     $chartValues = $weeklySales->values();

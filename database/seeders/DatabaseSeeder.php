@@ -12,20 +12,17 @@ class DatabaseSeeder extends Seeder
     /**
      * Seed the application's database.
      */
-    public function run(): void
-    {
-        User::create([
-            'name' => 'Super Admin',
-            'email' => 'superadmin@example.com',
-            'password' => Hash::make('password'),
-            'role' => 'superadmin',
-        ]);
-    
-        User::create([
-            'name' => 'Admin',
-            'email' => 'admin@example.com',
-            'password' => Hash::make('password'),
-            'role' => 'admin',
-        ]);
-    }
+   public function run(): void
+{
+    $this->call([
+        UserSeeder::class,
+        CategorySeeder::class,
+        ProductSeeder::class,
+        ManufacturerSeeder::class,
+        InputSeeder::class,
+        OutputSeeder::class,
+    ]);
+}
+
+
 }
